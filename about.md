@@ -4,12 +4,9 @@ title: About
 permalink: /about/
 ---
 
-Some information about you!
-
-### More Information
-
-A place to include any other types of information that you'd like to include about yourself.
+I'm a Java developer just now entering the web development space; I'm also trained in deep learning techniques, and frequently use Python for scripting the boring stuff. 
 
 ### Contact me
 
-[email@domain.com](mailto:email@domain.com)
+[LinkedIn](https://www.linkedin.com/in/amckinst/)
+[aaronmckinstry706@gmail.com](mailto:aaronmckinstry706@gmail.com)
