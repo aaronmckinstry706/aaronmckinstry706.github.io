@@ -9,4 +9,5 @@ I'm a Java developer just now entering the web development space; I'm also train
 ### Contact me
 
 [LinkedIn](https://www.linkedin.com/in/amckinst/)
+
 [aaronmckinstry706@gmail.com](mailto:aaronmckinstry706@gmail.com)
