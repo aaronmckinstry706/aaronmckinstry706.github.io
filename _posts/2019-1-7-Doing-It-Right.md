@@ -13,11 +13,9 @@ HOWEVER--I have been thinking of that project for some time now. If I had the ti
 
 (I do this in part for future employers--but, mostly, for myself. I just *have* to do it right.)
 
-This series of posts will consist of several parts, outlined (roughly) below. 
+This series of posts will consist of three broad sections, outlined (roughly) below. 
 
 1. Define the problem. 
-
-2. Constrain the solution. 
 
 3. Design a solution with good use of EIP. 
 
