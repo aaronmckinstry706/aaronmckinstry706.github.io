@@ -38,3 +38,23 @@ In words, the process is as follows.
 1. Once all three metadata searches have completed, the next call to `getMetadataSearchStatus(goatsSearchTicket)` by the NHCS client will return the search results. 
 
 Note that the interaction between the NHCS client and the GOATS API is the same as the interaction between the GOATS client and DB1/2/3 APIs. 
+
+The document retrieval consists of almost exactly the same interactions between NHCS, GOATS, and DB1/2/3, with the following differences. 
+
+* The calls are appropriately renamed as follows:
+
+  - `startDocumentRetrieval(documentId, ...)` (which returns `goatsRetrievalTicket`); and 
+  
+  - `getDocumentRetrievalStatus(goatsRetrievalTicket)`. 
+
+* The function `getDocumentRetrievalStatus(goatsRetrievalTicket)` can return three possible responses. 
+
+  - `retrievalStatus="inProgress", searchErrors=null`, if the retrieval is in progress;
+  
+  - an HTTP response with content type `application/pdf` that contains the PDF as the body, if the retrieval completed successfully; or
+  
+  - `retrievalStatus="complete", searchErrors=[...]`, if there was some error during retrieval. 
+
+* GOATS only needs to retrieve a given document from one of the DB's. 
+
+There are some more minor details, but we will defer those to a later post. We have defined the core of the problem, and it is enough to work with for now. 
