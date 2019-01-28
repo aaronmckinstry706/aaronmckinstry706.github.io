@@ -9,16 +9,52 @@ First, we define the problem at a high level; then we define the problem in enou
 
 ## High-Level Description
 
-Three hospital databases serve similar kinds of documents for the same person, but each belongs to a different organization. These three organizations want the databases to be searchable via a REST web service in a convenient manner, so that a new health care service can search through a patients' data stored at hospitals. To accomplish this, they propose the following:
+Three hospital databases serve similar kinds of documents for the same person, but each belongs to a different organization. These three organizations want the databases to be searchable via a REST web service in a convenient manner, so that a new health care service can search through a patients' data stored at hospitals. To accomplish this, they propose the following.
 
-* an HTTP web service (not necessarily REST, though they call it such) will be an interface between the new health care service and the three databases, as below;
+* An HTTP web service with JSON input/output (not necessarily REST, though they label it as such), called GOATS (Greatest-Of-All-Time Service), will be an interface between the New Health Care Service (NHCS) and the three databases (DB1/2/3), as below. 
   
-  ![]() TODO: add architecture layout. 
+  ![The system architecture.](/assets/doing_it_right_system_architecture.jfif)
   
-* the HTTP web service will be asynchronous and ticket-based ("start the operation and give me a ticket number; I'll ping you with this ticket number every two seconds until you're done searching");
+  The arrows indicate web service calls. So, NHCS calls GOATS, and GOATS in turn calls DB1/2/3. 
+  
+* The HTTP web service will be asynchronous and ticket-based ("start the operation and give me a ticket number; I'll ping you with this ticket number every two seconds until you're done searching"). 
 
-* the web service will consist of two parts: a metadata search ("give me document ids and document names for person X in date range Y-Z") and a document retrieval ("give me the document for document id A").
+* The web service will consist of two parts: a metadata search ("give me document ids and document names for patient Alex in date range Jan. 20, 1990 - Jun. 1, 1995") and a document retrieval ("give me the document for document id A").
 
 ## Detailed Description
 
-TODO: add a detailed description. 
+The details of the GOATS interfaces are best introduced with a UML sequence diagram. (My UML modeling skills are not solid, so bear with me.)
+
+![The expected interaction between NHCS, GOATS, and the DB.](/assets/doing_it_right_interaction_overview.jfif)
+
+Although this interaction only shows one database DB, the interaction sequence between GOATS and DB actually ahppens between GOATS and each of DB1/2/3. 
+
+In words, the process is as follows. 
+
+1. The NHCS client initiates a metadata search for the patient with the given `patientId`, and receives a `goatsSearchTicket` with which they can check on the status of the search. 
+
+1. Asynchronously, the GOATS client performs a metadata search on each database. Meanwhile, the NHCS client may be pinging the GOATS server to see whether the searches have completed. 
+
+1. Once all three metadata searches have completed, the next call to `getMetadataSearchStatus(goatsSearchTicket)` by the NHCS client will return the search results. 
+
+Note that the interaction between the NHCS client and the GOATS API is the same as the interaction between the GOATS client and DB1/2/3 APIs. 
+
+The document retrieval consists of almost exactly the same interactions between NHCS, GOATS, and DB1/2/3, with the following differences. 
+
+* The calls are appropriately renamed as follows:
+
+  - `startDocumentRetrieval(documentId, ...)` (which returns `goatsRetrievalTicket`); and 
+  
+  - `getDocumentRetrievalStatus(goatsRetrievalTicket)`. 
+
+* The function `getDocumentRetrievalStatus(goatsRetrievalTicket)` can return three possible responses. 
+
+  - `retrievalStatus="inProgress", searchErrors=null`, if the retrieval is in progress;
+  
+  - an HTTP response with content type `application/pdf` that contains the PDF as the body, if the retrieval completed successfully; or
+  
+  - `retrievalStatus="complete", searchErrors=[...]`, if there was some error during retrieval. 
+
+* GOATS only needs to retrieve a given document from one of the DB's. 
+
+There are some more minor details, but we will defer those to a later post. We have defined the core of the problem, and it is enough to work with for now. 
